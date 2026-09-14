@@ -11,7 +11,8 @@ const apply = process.argv.includes('--apply');
 const file = resolve(root, 'assets/channels-page-BfgN5gDl.js');
 const original = readFileSync(file, 'utf8');
 const marker = '// whatsapp-agent Channels integration v1';
-if (original.includes(marker)) { writeFileSync(resolve(here,'dist/channels-settings/channels-page-BfgN5gDl.js'), original.replace('${!s?waSettingsPanel(e):C}', '')); console.log('Existing integration staged.'); process.exit(0); }
+const panelFunction = '\nfunction waSettingsPanel(e){return x`<section aria-label="WhatsApp agent mappings">${e.configFormDirty?x`<p class="callout warn">Save or reload configuration changes before editing account mappings.</p>`:C}<whatsapp-channels-settings .client=${e.whatsappGatewayClient} .canAdmin=${e.canAdmin&&!e.configFormDirty}></whatsapp-channels-settings></section>`;}\n';
+if (original.includes(marker)) { writeFileSync(resolve(here,'dist/channels-settings/channels-page-BfgN5gDl.js'), original.replace('${!s?waSettingsPanel(e):C}', '').replace(/\nfunction waSettingsPanel\(e\)\{[\s\S]*$/, panelFunction)); console.log('Existing integration staged.'); process.exit(0); }
 const edits = [
   ['Yt({connected:t.connected', 'Yt({whatsappGatewayClient:e.gateway.snapshot.client,connected:t.connected'],
   ['function Yt(e){let t=Zt(e.snapshot)', 'function Yt(e){let t=Zt(e.snapshot)'],
@@ -23,7 +24,7 @@ for (const [before, after] of edits) {
   patched = patched.replace(before, after);
 }
 patched = `import "./whatsapp-channels-settings.js";\n${marker}\n` + patched;
-patched += '\nfunction waSettingsPanel(e){return x`<section aria-label="WhatsApp por agente">${e.configFormDirty?x`<p class="callout warn">Salve ou recarregue as alterações de configuração antes de editar os vínculos.</p>`:C}<whatsapp-channels-settings .client=${e.whatsappGatewayClient} .canAdmin=${e.canAdmin&&!e.configFormDirty}></whatsapp-channels-settings></section>`;}\n';
+patched += panelFunction;
 const staged = resolve(here,'dist/channels-settings/channels-page-BfgN5gDl.js');
 writeFileSync(staged, patched);
 if (!apply) { console.log('Staged Channels page; live installation unchanged.'); process.exit(0); }

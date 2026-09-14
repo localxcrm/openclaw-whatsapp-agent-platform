@@ -83,7 +83,7 @@ test("starts at head, sends once, persists offset, and deduplicates replay", asy
     pollTimeoutSeconds: 20,
     fetchImpl,
     logger,
-    async runAgent() { runs += 1; return { kind: "visible", text: "Olá" }; },
+    async runAgent() { runs += 1; return { kind: "visible", text: "Hello" }; },
   });
   await bridge.run(controller.signal);
 
@@ -97,7 +97,7 @@ test("starts at head, sends once, persists offset, and deduplicates replay", asy
     messaging_product: "whatsapp",
     to: "user:42",
     type: "text",
-    text: { body: "Olá" },
+    text: { body: "Hello" },
   });
   const state = JSON.parse(await readFile(join(stateDir, "whatsapp-agent-platform", "state.json"), "utf8"));
   assert.equal(state.offset, "10");
@@ -156,7 +156,7 @@ test("downloads and routes an audio message with validated metadata", async () =
     },
     async runAgent(params) {
       attachment = params.attachment;
-      return { kind: "visible", text: "Entendi o áudio" };
+      return { kind: "visible", text: "I understood the audio" };
     },
   });
   await bridge.run(controller.signal);
@@ -169,16 +169,16 @@ test("downloads and routes an audio message with validated metadata", async () =
 });
 
 test("builds an agent prompt with extracted media content and path privacy instruction", () => {
-  const prompt = buildAgentMessage("Veja isto", {
+  const prompt = buildAgentMessage("Look at this", {
     kind: "image",
     path: "/private/media/photo.jpg",
     filename: "photo.jpg",
     contentType: "image/jpeg",
     size: 123,
-  }, "Uma parede azul");
-  assert.match(prompt, /Uma parede azul/);
-  assert.match(prompt, /Veja isto/);
-  assert.match(prompt, /Não revele o caminho local/);
+  }, "A blue wall");
+  assert.match(prompt, /A blue wall/);
+  assert.match(prompt, /Look at this/);
+  assert.match(prompt, /Do not reveal the local file path/);
 });
 
 test("uploads and sends generated audio and video as native WhatsApp media", async () => {
@@ -209,7 +209,7 @@ test("uploads and sends generated audio and video as native WhatsApp media", asy
       if (!delivered) {
         delivered = true;
         return new Response(JSON.stringify({
-          entry: [{ changes: [{ value: { messages: [{ id: "wamid.media-reply", from: "user:42", type: "text", text: { body: "Responda em áudio e vídeo" } }] } }] }],
+          entry: [{ changes: [{ value: { messages: [{ id: "wamid.media-reply", from: "user:42", type: "text", text: { body: "Reply with audio and video" } }] } }] }],
           next_offset: 13,
         }), { status: 200 });
       }
@@ -219,7 +219,7 @@ test("uploads and sends generated audio and video as native WhatsApp media", asy
     async runAgent() {
       return {
         kind: "visible",
-        text: "Legenda do vídeo",
+        text: "Video caption",
         media: [
           { kind: "audio", buffer: Buffer.from("opus"), contentType: "audio/ogg; codecs=opus", filename: "voice.ogg", voice: true },
           { kind: "video", buffer: Buffer.from("mp4"), contentType: "video/mp4; codecs=avc1", filename: "video.mp4" },
@@ -245,7 +245,7 @@ test("uploads and sends generated audio and video as native WhatsApp media", asy
       messaging_product: "whatsapp",
       to: "user:42",
       type: "video",
-      video: { id: "media-2", caption: "Legenda do vídeo" },
+      video: { id: "media-2", caption: "Video caption" },
     },
   ]);
 });
@@ -283,8 +283,8 @@ test("keeps polling after a permanent outbound media rejection", async () => {
         delivered = true;
         return new Response(JSON.stringify({
           entry: [{ changes: [{ value: { messages: [
-            { id: "wamid.bad-media", from: "user:42", type: "text", text: { body: "áudio" } },
-            { id: "wamid.next-text", from: "user:42", type: "text", text: { body: "texto" } },
+            { id: "wamid.bad-media", from: "user:42", type: "text", text: { body: "audio" } },
+            { id: "wamid.next-text", from: "user:42", type: "text", text: { body: "text" } },
           ] } }] }],
           next_offset: 14,
         }), { status: 200 });
@@ -292,7 +292,7 @@ test("keeps polling after a permanent outbound media rejection", async () => {
       return new Response(null, { status: 204 });
     },
     async runAgent(params) {
-      if (params.message === "áudio") {
+      if (params.message === "audio") {
         return {
           kind: "visible",
           text: "",
@@ -330,7 +330,7 @@ test("does not resend after an ambiguous send failure", async () => {
         next_offset: 11,
       }), { status: 200 });
     },
-    async runAgent() { return { kind: "visible", text: "Olá" }; },
+    async runAgent() { return { kind: "visible", text: "Hello" }; },
   });
   const run = bridge.run(controller.signal);
   await new Promise((resolve) => setTimeout(resolve, 20));

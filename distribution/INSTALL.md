@@ -1,48 +1,54 @@
-# WhatsApp Agent Platform — distribuição aprovada 0.8.0
+# WhatsApp Agent Platform — English distribution 0.8.1
 
-Inclui plugin e integração da interface aprovada em 14/09/2026.
-O gerenciador aparece somente ao abrir **Settings → Channels → WhatsApp Agent Platform**.
-Lista agentes existentes e permite adicionar, editar e remover vínculos. Remover
-vínculo não apaga o agente. APIs são selecionadas por referência ao cofre protegido.
-Nenhuma conta, credencial, conversa, backup ou estado de Rodrigo acompanha o pacote.
+Includes the plugin and its account-management GUI. Open
+**Settings → Channels → WhatsApp Agent Platform** to manage mappings.
+The manager does not appear on the Channels overview.
 
-## Compatibilidade
+List existing agents, add/edit/remove account mappings, and select API references
+from the protected vault. Removing a mapping does not delete the agent.
+No real accounts, credentials, conversations, backups, or runtime state are included.
 
-Node.js >=24. A integração visual é específica do OpenClaw **2026.9.3** e
-valida também o formato dos arquivos. Não é um ponto de extensão oficial do SDK.
-Atualizações do OpenClaw podem substituí-la; outras versões exigem adaptação.
-O arquivo .tgz sozinho instala apenas o plugin: use o instalador completo para
-incluir a interface. Nenhum pacote foi publicado em registro público.
+## Compatibility
 
-## Instalação
+Node.js >=24. The GUI integration targets **OpenClaw 2026.9.3** and checks the
+host asset layout. It is not an official SDK extension slot. Host updates may
+replace it; other versions require adaptation. Installing only the `.tgz` does
+not install the Channels integration. This project is distributed through GitHub
+Releases; no npm publication is assumed.
 
-Extraia o ZIP. Informe o diretório do pacote OpenClaw instalado (aquele que contém
-package.json, openclaw.mjs e dist). Não é o diretório de configuração ~/.openclaw.
+## Installation
+
+Extract the ZIP. Supply the installed OpenClaw package directory containing
+`package.json`, `openclaw.mjs`, and `dist/`, not the `~/.openclaw` configuration folder.
 
 ```sh
-node install.mjs /caminho/para/node_modules/openclaw --check
-node install.mjs /caminho/para/node_modules/openclaw
+node install.mjs /path/to/node_modules/openclaw --check
+node install.mjs /path/to/node_modules/openclaw
 ```
 
-O primeiro comando só confere compatibilidade. O segundo instala o plugin usando
-o CLI oficial e aplica a interface com URLs versionadas, sem editar configurações
-financeiras, contas ou credenciais. Se o plugin já estiver instalado e não precisar
-ser substituído, use `--ui-only` para aplicar apenas a interface.
-Depois reinicie o Gateway pelo fluxo habitual e atualize a página.
-Cada instalação deve criar seus próprios agentes e configurar suas próprias APIs.
+The first command only checks compatibility. The second uses the official CLI
+to install the plugin and applies the GUI with versioned URLs. If the correct
+plugin version is already installed, use `--ui-only` to apply only the GUI.
+Restart the Gateway through its usual lifecycle and reload the page.
+Each installation must configure its own agents and APIs.
 
-## Recuperação
+Enable the plugin with `transport: "channel"` and an `accounts` map. Follow the
+[setup and usage guide](https://github.com/localxcrm/openclaw-whatsapp-agent-platform/blob/main/docs/CONFIGURATION.md).
+Preserve existing accounts and vault references when upgrading.
 
-A interface salva os arquivos index.html, index.html.gz e index.html.br existentes
-em ui/backups/cache-fix-<data>. Para desfazer a integração visual, restaure esses
-arquivos em dist/control-ui do OpenClaw e recarregue o navegador. Não remova backups
-até confirmar o funcionamento. O plugin e seu transporte não são desinstalados
-por essa recuperação. Os assets versionados não referenciados podem permanecer.
+## Rollback
 
-## Validação
+The GUI installer backs up existing `index.html`, `index.html.gz`, and
+`index.html.br` files under `ui/backups/cache-fix-<timestamp>`. Restore these
+files to OpenClaw's `dist/control-ui` directory and reload to undo the GUI
+integration. Keep backups until operation is confirmed. This does not uninstall
+the transport plugin. Unreferenced versioned assets may remain.
 
-38 testes unitários, tipagem e build passaram. O teste de navegador com cache antigo
-passou para adicionar, editar, remover e remover o último vínculo, usando dados
-fictícios. A interface local foi aprovada pelo usuário. O instalador da distribuição
-foi testado em cópia isolada dos arquivos do host, sem alterar contas reais.
-Não foi testada uma instalação completa em um segundo computador.
+## Validation
+
+Type checking, builds, and 38 unit tests run with existing local dependencies.
+The English GUI browser fixture exercises add, edit, remove, last-account removal,
+and read-only access with synthetic accounts. The original host integration was
+also tested with a warm cache and on an isolated copy of the host assets.
+These checks do not claim authenticated end-to-end testing on a second computer.
+See the repository README for the known `npm ci` clean-build limitation.

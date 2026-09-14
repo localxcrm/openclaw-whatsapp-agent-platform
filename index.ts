@@ -187,7 +187,7 @@ export async function understandAttachment(
   if (attachment.kind === "image" || attachment.kind === "sticker") {
     return (await describeImageFile({
       ...common,
-      prompt: "Descreva objetivamente esta imagem recebida pelo WhatsApp, incluindo qualquer texto visível relevante.",
+      prompt: "Describe this image received through WhatsApp objectively, including any relevant visible text.",
       scopeContext: { sessionKey: context.sessionKey, channel: "whatsapp-agent", chatType: "direct" },
     })).text;
   }

@@ -26,8 +26,8 @@ test("plugin manifest rejects unsafe account ids and incomplete accounts", () =>
 });
 
 test("plugin manifest publishes the prebuilt native Control UI assets", async () => {
-  assert.equal(manifest.controlUi?.entry, "dist/control-ui/0.8.0/control-ui.js");
-  assert.deepEqual(manifest.controlUi?.styles, ["dist/control-ui/0.8.0/control-ui.css"]);
+  assert.equal(manifest.controlUi?.entry, "dist/control-ui/0.8.1/control-ui.js");
+  assert.deepEqual(manifest.controlUi?.styles, ["dist/control-ui/0.8.1/control-ui.css"]);
   await Promise.all([
     readFile(new URL(`../${manifest.controlUi?.entry}`, import.meta.url)),
     readFile(new URL(`../${manifest.controlUi?.styles?.[0]}`, import.meta.url)),

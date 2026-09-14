@@ -1,13 +1,13 @@
 {
   "name": "openclaw-whatsapp-agent-platform",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "OpenClaw WhatsApp Agent Platform plugin with a GUI to add, edit and remove agent mappings using protected API references.",
   "license": "MIT",
   "type": "module",
   "files": [
     "dist/index.js",
     "dist/src",
-    "dist/control-ui/0.8.0",
+    "dist/control-ui/0.8.1",
     "openclaw.plugin.json",
     "README.md",
     "LICENSE"
@@ -28,7 +28,7 @@
     "test": "node --experimental-strip-types --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
-    "build:ui": "esbuild src/control-ui.ts --bundle --format=esm --platform=browser --target=es2022 --outdir=dist/control-ui/0.8.0",
+    "build:ui": "esbuild src/control-ui.ts --bundle --format=esm --platform=browser --target=es2022 --outdir=dist/control-ui/0.8.1",
     "validate": "npm run typecheck && npm test",
     "build:channels-ui": "esbuild src/channels-settings.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=distribution/ui/dist/channels-settings/whatsapp-channels-settings.js",
     "pretest": "npm run build:ui"

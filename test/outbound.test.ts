@@ -33,12 +33,12 @@ test("removes delivered media links while preserving the reply caption", () => {
     { url: "https://cdn.example/video.mp4", audioAsVoice: false },
   ];
   const text = [
-    "Aqui está o resultado.",
-    "[Ouvir áudio](/media/voice.opus)",
+    "Here is the result.",
+    "[Play audio](/media/voice.opus)",
     "MEDIA:https://cdn.example/video.mp4",
   ].join("\n");
 
-  assert.equal(stripMediaReferencesFromText(text, refs), "Aqui está o resultado.");
+  assert.equal(stripMediaReferencesFromText(text, refs), "Here is the result.");
 });
 
 test("detects HeyGen WAV and video links in the current final assistant reply", () => {
@@ -48,7 +48,7 @@ test("detects HeyGen WAV and video links in the current final assistant reply", 
       __openclaw: { runId: "current-run" },
       content: [{
         type: "text",
-        text: "🎧 [Ouvir áudio](https://resource2.heygen.ai/text_to_speech/job/id=voice.wav)\n\n[Ver vídeo](https://cdn.example/render.mp4)",
+        text: "🎧 [Play audio](https://resource2.heygen.ai/text_to_speech/job/id=voice.wav)\n\n[Watch video](https://cdn.example/render.mp4)",
       }],
     },
   ];

@@ -19,7 +19,7 @@ if(args.includes('--check')) {console.log('Compatibility check passed; live inst
 if(!args.includes('--ui-only')) {
  const cli=resolve(root,'openclaw.mjs');
  if(!existsSync(cli))throw Error('OpenClaw CLI entry missing; no installation performed.');
- run(process.execPath,[cli,'plugins','install',resolve(here,'openclaw-whatsapp-agent-platform-0.8.0.tgz')]);
+ run(process.execPath,[cli,'plugins','install',resolve(here,'openclaw-whatsapp-agent-platform-0.8.1.tgz')]);
 }
 run(process.execPath,[resolve(here,'ui/install-channels-cache-fix.mjs'),'--apply']);
 console.log('UI installed. Restart the Gateway when appropriate, reload Settings → Channels and open WhatsApp Agent Platform. Existing accounts/credentials were not copied into this distribution.');

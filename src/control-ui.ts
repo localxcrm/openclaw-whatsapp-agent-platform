@@ -20,9 +20,9 @@ function routeCard(host: AccountManagerHost, route: ChannelAccountRoute, hasAcco
   grid.className = "wa-agent-route-grid";
 
   const agentField = document.createElement("label");
-  agentField.textContent = "Agente responsável";
+  agentField.textContent = "Assigned agent";
   const agentSelect = document.createElement("select");
-  agentSelect.setAttribute("aria-label", `Agente da conta ${route.accountId}`);
+  agentSelect.setAttribute("aria-label", `Agent for account ${route.accountId}`);
   for (const agent of host.agents.rows.filter((entry) => entry.kind !== "system")) {
     const option = document.createElement("option");
     option.value = agent.id;
@@ -32,17 +32,17 @@ function routeCard(host: AccountManagerHost, route: ChannelAccountRoute, hasAcco
   if (route.agentId && !host.agents.rows.some((agent) => agent.id === route.agentId)) {
     const missing = document.createElement("option");
     missing.value = route.agentId;
-    missing.textContent = `${route.agentId} (não encontrado)`;
+    missing.textContent = `${route.agentId} (not found)`;
     agentSelect.append(missing);
   }
   agentSelect.value = route.agentId;
   agentField.append(agentSelect);
 
   const sessionField = document.createElement("label");
-  sessionField.textContent = "Sessão";
+  sessionField.textContent = "Session";
   const sessionSelect = document.createElement("select");
-  sessionSelect.setAttribute("aria-label", `Modo de sessão da conta ${route.accountId}`);
-  sessionSelect.append(new Option("Principal do agente", "main"), new Option("Isolada por contato", "isolated"));
+  sessionSelect.setAttribute("aria-label", `Session mode for account ${route.accountId}`);
+  sessionSelect.append(new Option("Agent main session", "main"), new Option("Isolated per contact", "isolated"));
   sessionSelect.value = route.sessionMode;
   sessionField.append(sessionSelect);
 
@@ -51,25 +51,25 @@ function routeCard(host: AccountManagerHost, route: ChannelAccountRoute, hasAcco
   const enabled = document.createElement("input");
   enabled.type = "checkbox";
   enabled.checked = route.enabled;
-  enabledField.append(enabled, document.createTextNode("Conta ativa"));
+  enabledField.append(enabled, document.createTextNode("Account enabled"));
 
   const actions = document.createElement("div");
   actions.className = "wa-agent-route-actions";
   const save = document.createElement("button");
   save.type = "button";
-  save.textContent = "Salvar vínculo";
+  save.textContent = "Save mapping";
   save.disabled = !host.connection.canAdmin;
   const status = document.createElement("output");
   status.setAttribute("aria-live", "polite");
   save.onclick = async () => {
     const agentId = agentSelect.value.trim();
     if (!agentId) {
-      status.textContent = "Selecione um agente.";
+      status.textContent = "Select an agent.";
       status.dataset.tone = "danger";
       return;
     }
     save.disabled = true;
-    status.textContent = "Salvando…";
+    status.textContent = "Saving…";
     status.dataset.tone = "neutral";
     try {
       const patch = buildAccountRoutePatch({
@@ -81,13 +81,13 @@ function routeCard(host: AccountManagerHost, route: ChannelAccountRoute, hasAcco
       await host.request("config.patch", {
         raw: JSON.stringify(patch),
         baseHash: hash,
-        note: `Atualização do vínculo WhatsApp ${route.accountId} → ${agentId}`,
+        note: `Update WhatsApp mapping ${route.accountId} → ${agentId}`,
       });
-      status.textContent = "Vínculo salvo.";
+      status.textContent = "Mapping saved.";
       status.dataset.tone = "success";
       await reload();
     } catch (error) {
-      status.textContent = "Não foi possível salvar. Atualize a página e tente novamente.";
+      status.textContent = "Unable to save. Refresh the page and try again.";
       status.dataset.tone = "danger";
     } finally {
       if (!host.signal.aborted) save.disabled = !host.connection.canAdmin;
@@ -95,17 +95,17 @@ function routeCard(host: AccountManagerHost, route: ChannelAccountRoute, hasAcco
   };
   const remove = document.createElement("button");
   remove.type = "button";
-  remove.textContent = "Remover vínculo";
+  remove.textContent = "Remove mapping";
   remove.disabled = !host.connection.canAdmin || !hasAccounts;
   remove.onclick = async () => {
-    if (!window.confirm(`Remover a conta ${route.accountId} do WhatsApp? O agente, histórico e segredo no cofre serão preservados.`)) return;
+    if (!window.confirm(`Remove WhatsApp account ${route.accountId}? The agent, history, and vault secret will be preserved.`)) return;
     remove.disabled = true;
     save.disabled = true;
     try {
-      await host.request("config.patch", { raw: JSON.stringify(buildAccountMutation(route.accountId, null)), baseHash: hash, note: `Remoção do vínculo WhatsApp ${route.accountId}` });
+      await host.request("config.patch", { raw: JSON.stringify(buildAccountMutation(route.accountId, null)), baseHash: hash, note: `Remove WhatsApp mapping ${route.accountId}` });
       await reload();
     } catch {
-      status.textContent = "Não foi possível remover. Atualize a página e tente novamente.";
+      status.textContent = "Unable to remove. Refresh the page and try again.";
     } finally { remove.disabled = !host.connection.canAdmin; save.disabled = !host.connection.canAdmin; }
   };
   actions.append(save, remove, status);
@@ -118,7 +118,7 @@ function addAccountCard(host: AccountManagerHost, routes: ChannelAccountRoute[],
   const card = document.createElement("article");
   card.className = "wa-agent-route-card";
   const open = document.createElement("button");
-  open.textContent = "+ Adicionar agente";
+  open.textContent = "+ Add agent";
   open.type = "button";
   open.disabled = !host.connection.canAdmin || (!hasAccounts && routes.length > 0);
   const form = document.createElement("form");
@@ -129,46 +129,46 @@ function addAccountCard(host: AccountManagerHost, routes: ChannelAccountRoute[],
     const element = document.createElement("label"); element.textContent = label; element.append(input); form.append(element);
   };
   const id = document.createElement("input");
-  id.required = true; id.pattern = "[a-z][a-z0-9_-]*"; id.placeholder = "ex.: atendimento";
-  field("Nome da conta", id);
+  id.required = true; id.pattern = "[a-z][a-z0-9_-]*"; id.placeholder = "e.g. support";
+  field("Account name", id);
   const agent = document.createElement("select"); agent.required = true;
-  agent.append(new Option("Selecione o agente", ""));
+  agent.append(new Option("Select an agent", ""));
   for (const row of host.agents.rows.filter(row => row.kind !== "system")) agent.append(new Option(`${agentLabel(row)} (${row.id})`, row.id));
-  field("Agente existente", agent);
+  field("Existing agent", agent);
   const secret = document.createElement("select"); secret.required = true;
-  secret.append(new Option("Selecione a API salva no cofre", ""));
-  field("API do WhatsApp", secret);
+  secret.append(new Option("Select the API saved in the vault", ""));
+  field("WhatsApp API", secret);
   const vault = document.createElement("a");
   vault.href = `${host.basePath.replace(/\/$/, "")}/settings/secrets`;
   vault.target = "_blank"; vault.rel = "noopener";
-  vault.textContent = "Cadastrar API no cofre protegido ↗";
+  vault.textContent = "Save API in the protected vault ↗";
   const hint = document.createElement("p");
-  hint.textContent = "No cofre: adicione um segredo com nome WHATSAPP_AGENT_NOME_TOKEN, informe o token no campo protegido e permita api.whatsapp.com. Volte aqui e atualize a lista. Nenhum token é exibido nesta página.";
-  const update = document.createElement("button"); update.type = "button"; update.textContent = "Atualizar APIs";
+  hint.textContent = "In the vault, add a secret named WHATSAPP_AGENT_NAME_TOKEN, enter the token in the protected field, and allow api.whatsapp.com. Return here and refresh the list. This page never displays token values.";
+  const update = document.createElement("button"); update.type = "button"; update.textContent = "Refresh APIs";
   const status = document.createElement("output"); status.setAttribute("aria-live", "polite");
   const loadSecrets = async () => {
     update.disabled = true;
     try {
       const result = await host.request<{ entries: { name: string; kind: string }[] }>("secrets.store.list", {});
       const selected = secret.value;
-      secret.replaceChildren(new Option("Selecione a API salva no cofre", ""));
+      secret.replaceChildren(new Option("Select the API saved in the vault", ""));
       for (const entry of result.entries.filter(entry => entry.kind === "secret" && !usedSecrets.includes(entry.name))) secret.append(new Option(entry.name, entry.name));
       secret.value = selected;
       status.textContent = "";
-    } catch { status.textContent = "Não foi possível listar o cofre. Confira sua permissão de administrador."; }
+    } catch { status.textContent = "Unable to list vault entries. Check your administrator permissions."; }
     finally { update.disabled = false; }
   };
   update.onclick = () => { void loadSecrets(); };
   open.onclick = () => { form.hidden = !form.hidden; if (!form.hidden) { id.focus(); void loadSecrets(); } };
-  const save = document.createElement("button"); save.type = "submit"; save.textContent = "Adicionar vínculo";
+  const save = document.createElement("button"); save.type = "submit"; save.textContent = "Add mapping";
   form.onsubmit = async event => {
     event.preventDefault(); save.disabled = true;
     try {
-      if (!host.agents.rows.some(row => row.id === agent.value && row.kind !== "system")) throw new Error("Agente indisponível.");
+      if (!host.agents.rows.some(row => row.id === agent.value && row.kind !== "system")) throw new Error("Agent unavailable.");
       const patch = buildNewAccountPatch(id.value.trim(), agent.value, secret.value, routes.map(route => route.accountId));
-      await host.request("config.patch", { raw: JSON.stringify(patch), baseHash: hash, note: `Adicionar vínculo WhatsApp ${id.value.trim()}` });
+      await host.request("config.patch", { raw: JSON.stringify(patch), baseHash: hash, note: `Add mapping WhatsApp ${id.value.trim()}` });
       await reload();
-    } catch { status.textContent = "Não foi possível adicionar. Confira os campos, use um nome de conta único e atualize a página antes de tentar novamente."; }
+    } catch { status.textContent = "Unable to add the mapping. Check the fields, use a unique account name, and refresh the page before trying again."; }
     finally { save.disabled = !host.connection.canAdmin; }
   };
   form.append(vault, hint, update, save, status);
@@ -181,14 +181,14 @@ export default defineControlUiPlugin({
   activate(host) {
     host.ui.registerNavigation({
       id: "whatsapp-agent-routing",
-      label: "WhatsApp por agente",
+      label: "WhatsApp agent mappings",
       page: { id: "whatsapp-agent-routing" },
       icon: "messageCircle",
       order: 72,
     });
     host.ui.registerPage({
       id: "whatsapp-agent-routing",
-      label: "WhatsApp por agente",
+      label: "WhatsApp agent mappings",
       mount(container, context) {
         return mountAccountManager(container, host);
       },
@@ -201,13 +201,13 @@ export function mountAccountManager(container: HTMLElement, host: AccountManager
         page.className = "wa-agent-routing-page";
         const header = document.createElement("header");
         const heading = document.createElement("h1");
-        heading.textContent = "WhatsApp por agente";
+        heading.textContent = "WhatsApp agent mappings";
         const description = document.createElement("p");
-        description.textContent = "Adicione agentes ao WhatsApp, selecione a API no cofre protegido e gerencie os vínculos. Remover um vínculo não apaga o agente.";
+        description.textContent = "Connect agents to WhatsApp, select an API from the protected vault, and manage account mappings. Removing a mapping does not delete the agent.";
         const refresh = document.createElement("button");
         refresh.type = "button";
         refresh.className = "wa-agent-secondary-button";
-        refresh.textContent = "Atualizar";
+        refresh.textContent = "Refresh";
         header.append(heading, description, refresh);
         const notice = document.createElement("p");
         notice.className = "wa-agent-route-notice";
@@ -218,7 +218,7 @@ export function mountAccountManager(container: HTMLElement, host: AccountManager
 
         const load = async () => {
           refresh.disabled = true;
-          notice.textContent = "Carregando configuração…";
+          notice.textContent = "Loading configuration…";
           notice.dataset.tone = "neutral";
           list.replaceChildren();
           try {
@@ -228,11 +228,11 @@ export function mountAccountManager(container: HTMLElement, host: AccountManager
             const routes = readAccountRoutes(snapshot.config);
             const hasAccounts = hasAccountMap(snapshot.config);
             const hash = snapshot.hash;
-            if (!hash) throw new Error("O Gateway não retornou a revisão da configuração.");
+            if (!hash) throw new Error("The Gateway did not return the configuration revision.");
 
             notice.textContent = host.connection.canAdmin
-              ? `${routes.length} conta(s) configurada(s).`
-              : "Somente administradores podem alterar estes vínculos.";
+              ? `${routes.length} configured account(s).`
+              : "Only administrators can change these mappings.";
             list.append(addAccountCard(host, routes, hasAccounts, hash, load, usedStoreSecrets(snapshot.config)));
             for (const route of routes) list.append(routeCard(host, route, hasAccounts, hash, load));
           } catch (error) {

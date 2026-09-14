@@ -69,15 +69,15 @@ export function hasAccountMap(config: unknown): boolean {
 
 export function buildAccountMutation(accountId: string, account: UnknownRecord | null): UnknownRecord {
   if (!/^[a-z][a-z0-9_-]*$/.test(accountId) || ["constructor", "prototype", "__proto__"].includes(accountId)) {
-    throw new Error("Use um identificador com letras minúsculas, números, hífen ou sublinhado.");
+    throw new Error("Use an identifier with lowercase letters, numbers, hyphens, or underscores.");
   }
   return { plugins: { entries: { "whatsapp-agent-admin": { config: { accounts: { [accountId]: account } } } } } };
 }
 
 export function buildNewAccountPatch(accountId: string, agentId: string, secretName: string, existingIds: string[]): UnknownRecord {
-  if (existingIds.includes(accountId)) throw new Error("Já existe uma conta com esse identificador.");
-  if (!/^[a-z][a-z0-9_-]*$/.test(agentId)) throw new Error("Selecione um agente válido.");
-  if (!/^[A-Z_][A-Z0-9_]*$/.test(secretName)) throw new Error("Selecione a API no cofre protegido.");
+  if (existingIds.includes(accountId)) throw new Error("An account with this identifier already exists.");
+  if (!/^[a-z][a-z0-9_-]*$/.test(agentId)) throw new Error("Select a valid agent.");
+  if (!/^[A-Z_][A-Z0-9_]*$/.test(secretName)) throw new Error("Select an API from the protected vault.");
   return buildAccountMutation(accountId, { agentId, apiToken: { source: "store", provider: "default", id: secretName }, enabled: true, sessionMode: "isolated" });
 }
 

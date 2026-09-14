@@ -2,14 +2,14 @@
   "id": "whatsapp-agent-admin",
   "name": "WhatsApp Agent Platform",
   "description": "Private text and media bridge from Meta's WhatsApp Agent Platform to any OpenClaw agent",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "activation": {
     "onStartup": true
   },
   "controlUi": {
-    "entry": "dist/control-ui/0.8.0/control-ui.js",
+    "entry": "dist/control-ui/0.8.1/control-ui.js",
     "styles": [
-      "dist/control-ui/0.8.0/control-ui.css"
+      "dist/control-ui/0.8.1/control-ui.css"
     ]
   },
   "configContracts": {

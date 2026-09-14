@@ -54,9 +54,9 @@ export class WhatsAppChannelsSettings extends HTMLElement {
       basePath: location.pathname.split("/settings/")[0],
       connection: { canAdmin: this.admin },
       request: async <T>(method: string, params?: Record<string, unknown>) => {
-        if (controller.signal.aborted) throw new Error("Página desconectada.");
+        if (controller.signal.aborted) throw new Error("Page disconnected.");
         const result = await client.request<T>(method, params);
-        if (controller.signal.aborted) throw new Error("Página desconectada.");
+        if (controller.signal.aborted) throw new Error("Page disconnected.");
         return result;
       },
       agents: {

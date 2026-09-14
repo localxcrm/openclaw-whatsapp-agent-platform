@@ -137,20 +137,20 @@ export function normalizeApiToken(token: string): string {
 export function buildAgentMessage(message: string, attachment?: DownloadedMedia, understanding?: string): string {
   if (!attachment) return message;
   const labels: Record<SupportedMediaKind, string> = {
-    audio: "áudio",
-    document: "documento",
-    image: "imagem",
-    sticker: "figurinha",
-    video: "vídeo",
+    audio: "audio",
+    document: "document",
+    image: "image",
+    sticker: "sticker",
+    video: "video",
   };
   return [
-    `[Anexo do WhatsApp: ${labels[attachment.kind]}]`,
-    attachment.filename ? `Nome original: ${attachment.filename}` : undefined,
-    attachment.contentType ? `Tipo: ${attachment.contentType}` : undefined,
-    `Arquivo local: ${attachment.path}`,
-    understanding ? `Conteúdo extraído automaticamente:\n${understanding}` : undefined,
-    message.trim() ? `Mensagem/legenda do usuário:\n${message.trim()}` : undefined,
-    "Analise o anexo e responda ao usuário. Não revele o caminho local do arquivo na resposta.",
+    `[WhatsApp attachment: ${labels[attachment.kind]}]`,
+    attachment.filename ? `Original filename: ${attachment.filename}` : undefined,
+    attachment.contentType ? `Type: ${attachment.contentType}` : undefined,
+    `Local file: ${attachment.path}`,
+    understanding ? `Automatically extracted content:\n${understanding}` : undefined,
+    message.trim() ? `User message/caption:\n${message.trim()}` : undefined,
+    "Analyze the attachment and respond to the user. Do not reveal the local file path in your response.",
   ].filter(Boolean).join("\n");
 }
 

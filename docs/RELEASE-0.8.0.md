@@ -1,20 +1,22 @@
 # v0.8.0 — WhatsApp Agent Platform GUI
 
-Primeira publicação pública da distribuição aprovada.
+Initial public release of the approved distribution.
 
-- Gerenciador somente nos detalhes de WhatsApp Agent Platform em Settings → Channels.
-- Adicionar vínculo com agente existente e API referenciada no cofre protegido.
-- Alterar responsável, sessão e estado ativo; remover vínculo sem apagar o agente.
-- Instalador com verificação de compatibilidade e assets versionados contra cache antigo.
-- README, guia de configuração/uso, código TypeScript, testes e licença MIT.
+- Account manager inside WhatsApp Agent Platform details in Settings → Channels.
+- Map an existing agent to a protected vault API reference.
+- Change the assigned agent, session mode, and enabled state.
+- Remove mappings without deleting agents.
+- Compatibility-checked installer and versioned assets for stale browser caches.
+- TypeScript source, tests, MIT license, and setup/usage documentation.
 
-**Requisito da GUI: OpenClaw 2026.9.3 + Node.js 24+.** Instale pelo ZIP completo;
-o arquivo `.tgz` sozinho não instala a integração de Channels.
+**GUI requirement: OpenClaw 2026.9.3 + Node.js 24+.** Install the complete ZIP;
+the `.tgz` alone does not install the Channels integration.
 
-O ZIP é o mesmo artefato aprovado antes da publicação. A documentação atualizada
-está no README e em docs/CONFIGURATION.md. Nenhuma conta ou credencial real incluída.
+This historical release contains the original Portuguese GUI and package docs.
+For the English interface and documentation, use **v0.8.1 or newer**. Historical
+v0.8.0 binaries are preserved rather than silently replaced.
 
-Validação: 38 testes, tipagem e build com dependências locais; navegador com dados
-fictícios/cache antigo e instalador em cópia isolada do host. Instalação limpa de
-dependências de desenvolvimento bloqueada por iconv-lite@~0.8.0 indisponível;
-sem afirmação de CI verde ou teste em um segundo computador.
+Validation: 38 tests, type checking, and builds with local dependencies; browser
+fixtures with synthetic data and a warm cache; installer on an isolated host copy.
+A clean development dependency install was blocked by unavailable
+`iconv-lite@~0.8.0`; no green CI or second-computer deployment is claimed.
