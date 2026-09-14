@@ -1,0 +1,242 @@
+{
+  "id": "whatsapp-agent-admin",
+  "name": "WhatsApp Agent Platform",
+  "description": "Private text and media bridge from Meta's WhatsApp Agent Platform to any OpenClaw agent",
+  "version": "0.8.0",
+  "activation": {
+    "onStartup": true
+  },
+  "controlUi": {
+    "entry": "dist/control-ui/0.8.0/control-ui.js",
+    "styles": [
+      "dist/control-ui/0.8.0/control-ui.css"
+    ]
+  },
+  "configContracts": {
+    "secretInputs": {
+      "paths": [
+        {
+          "path": "apiToken",
+          "expected": "string",
+          "ownerKind": "route"
+        },
+        {
+          "path": "accounts.*.apiToken",
+          "expected": "string",
+          "ownerKind": "route"
+        }
+      ]
+    }
+  },
+  "uiHints": {
+    "apiToken": {
+      "label": "WhatsApp Agent API token",
+      "sensitive": true
+    },
+    "agentId": {
+      "label": "OpenClaw agent id"
+    },
+    "workspace": {
+      "label": "Agent workspace",
+      "placeholder": "/absolute/path/to/workspace"
+    },
+    "adminWorkspace": {
+      "label": "Legacy agent workspace",
+      "help": "Deprecated compatibility field; use workspace for new installations",
+      "advanced": true
+    },
+    "stateNamespace": {
+      "label": "State namespace",
+      "advanced": true
+    },
+    "accounts.*.apiToken": {
+      "label": "WhatsApp Agent API token",
+      "sensitive": true
+    },
+    "accounts.*.agentId": {
+      "label": "OpenClaw agent id"
+    },
+    "accounts.*.workspace": {
+      "label": "Agent workspace",
+      "placeholder": "/absolute/path/to/workspace"
+    },
+    "accounts.*.stateNamespace": {
+      "label": "State namespace",
+      "advanced": true
+    },
+    "accounts.*.sessionMode": {
+      "label": "Session mode",
+      "help": "Use main to share the agent's primary session, or isolated for a dedicated WhatsApp session"
+    },
+    "transport": {
+      "label": "Transport mode",
+      "help": "legacy preserves existing service; channel opts into native channel dispatch. Never run both for the same token."
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "$defs": {
+      "secretRef": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "env",
+              "file",
+              "exec",
+              "store"
+            ]
+          },
+          "provider": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "provider",
+          "id"
+        ]
+      },
+      "secretInput": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "$ref": "#/$defs/secretRef"
+          }
+        ]
+      },
+      "account": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "apiToken",
+          "agentId"
+        ],
+        "properties": {
+          "apiToken": {
+            "$ref": "#/$defs/secretInput"
+          },
+          "agentId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "workspace": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stateNamespace": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "pollTimeoutSeconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 25,
+            "default": 20
+          },
+          "sessionMode": {
+            "type": "string",
+            "enum": [
+              "isolated",
+              "main"
+            ],
+            "default": "isolated"
+          }
+        }
+      }
+    },
+    "anyOf": [
+      {
+        "required": [
+          "apiToken"
+        ]
+      },
+      {
+        "required": [
+          "accounts"
+        ]
+      }
+    ],
+    "properties": {
+      "accounts": {
+        "type": "object",
+        "propertyNames": {
+          "pattern": "^[a-z][a-z0-9_-]*$"
+        },
+        "additionalProperties": {
+          "$ref": "#/$defs/account"
+        }
+      },
+      "apiToken": {
+        "$ref": "#/$defs/secretInput"
+      },
+      "agentId": {
+        "type": "string",
+        "default": "main",
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "workspace": {
+        "type": "string",
+        "minLength": 1
+      },
+      "adminWorkspace": {
+        "type": "string",
+        "minLength": 1,
+        "deprecated": true
+      },
+      "stateNamespace": {
+        "type": "string",
+        "default": "whatsapp-agent-platform",
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "pollTimeoutSeconds": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 25,
+        "default": 20
+      },
+      "sessionMode": {
+        "type": "string",
+        "enum": [
+          "isolated",
+          "main"
+        ],
+        "default": "isolated"
+      },
+      "transport": {
+        "type": "string",
+        "enum": [
+          "legacy",
+          "channel"
+        ],
+        "default": "legacy"
+      }
+    }
+  },
+  "channels": [
+    "whatsapp-agent"
+  ],
+  "channelConfigs": {
+    "whatsapp-agent": {
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "description": "Account settings are retained under plugins.entries.whatsapp-agent-admin.config for backward compatibility."
+      }
+    }
+  }
+}

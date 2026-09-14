@@ -1,0 +1,72 @@
+{
+  "name": "openclaw-whatsapp-agent-platform",
+  "version": "0.8.0",
+  "description": "OpenClaw WhatsApp Agent Platform plugin with a GUI to add, edit and remove agent mappings using protected API references.",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist/index.js",
+    "dist/src",
+    "dist/control-ui/0.8.0",
+    "openclaw.plugin.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "openclaw",
+    "whatsapp",
+    "whatsapp-agent-platform"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "npm run typecheck && npm test && npm run build && npm run build:ui",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "build:ui": "esbuild src/control-ui.ts --bundle --format=esm --platform=browser --target=es2022 --outdir=dist/control-ui/0.8.0",
+    "validate": "npm run typecheck && npm test",
+    "build:channels-ui": "esbuild src/channels-settings.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=distribution/ui/dist/channels-settings/whatsapp-channels-settings.js",
+    "pretest": "npm run build:ui"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.9.3 <2027"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "ajv": "^8.17.1",
+    "esbuild": "0.28.2",
+    "openclaw": "2026.9.3",
+    "typescript": "^5.9.0"
+  },
+  "openclaw": {
+    "extensions": [
+      "./dist/index.js"
+    ],
+    "compat": {
+      "pluginApi": "2026.9.3",
+      "minGatewayVersion": "2026.9.3"
+    },
+    "build": {
+      "openclawVersion": "2026.9.3",
+      "pluginSdkVersion": "2026.9.3"
+    },
+    "channel": {
+      "id": "whatsapp-agent",
+      "label": "WhatsApp Agent Platform",
+      "blurb": "Meta WhatsApp Agent Platform native channel"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/localxcrm/openclaw-whatsapp-agent-platform.git"
+  },
+  "homepage": "https://github.com/localxcrm/openclaw-whatsapp-agent-platform#readme",
+  "bugs": {
+    "url": "https://github.com/localxcrm/openclaw-whatsapp-agent-platform/issues"
+  }
+}
